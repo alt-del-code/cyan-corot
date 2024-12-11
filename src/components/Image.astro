@@ -1,0 +1,41 @@
+---
+// Image.astro
+import { Image as AstroImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+type Props = {
+  src: ImageMetadata | string;
+  alt: string;
+  width?: number;
+  height?: number;
+  className?: string;
+};
+
+const {
+  src,
+  alt,
+  width = 800,
+  height = 600,
+  className,
+  ...props
+}: Props = Astro.props;
+
+// For string sources, we need to import them dynamically
+const resolvedSrc =
+  typeof src === "string" ? new URL(src, import.meta.url).href : src;
+
+// Ensure src is of type ImageMetadata for AstroImage
+const imageSrc: ImageMetadata =
+  typeof resolvedSrc === "string"
+    ? { src: resolvedSrc, width, height, format: "jpeg" }  // Default format
+    : { ...resolvedSrc, width, height };
+---
+
+<AstroImage
+  src={imageSrc}
+  alt={alt}
+  width={width}
+  height={height}
+  class={className}
+  {...props}
+/>

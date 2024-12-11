@@ -1,0 +1,53 @@
+---
+import config from '../../config';
+
+interface Props {
+    formId?: string;
+    width?: string;
+    height?: string;
+    title?: string;
+    description?: string;
+}
+
+const { 
+    formId = config.integrations.forms.tally.contact.formId,
+    width = config.integrations.forms.defaultWidth,
+    height = config.integrations.forms.defaultHeight,
+    title = config.integrations.forms.tally.contact.title,
+    description = config.integrations.forms.tally.contact.description
+} = Astro.props;
+---
+
+<div class="w-full">
+    <iframe
+        src={`https://tally.so/embed/${formId}`}
+        width={width}
+        height={height}
+        style="border: 0; margin: 0; padding: 0;"
+        title={title}
+    >
+    </iframe>
+</div>
+
+<!-- Tally Script -->
+<script is:inline>
+  // Load Tally Script
+  (function(d){
+    var s = d.createElement("script");
+    s.setAttribute("data-tally-script", "true");
+    s.src = "https://tally.so/widgets/embed.js";
+    s.defer = true;
+    d.body.appendChild(s);
+  })(document);
+</script>
+
+<script>
+  // Type-safe configuration
+  declare global {
+    interface Window {
+      TallyConfig?: TallyConfig;
+      Tally?: TallyAPI;
+    }
+  }
+
+ 

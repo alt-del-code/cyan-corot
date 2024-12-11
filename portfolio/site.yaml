@@ -1,0 +1,49 @@
+siteName: KrrishCo
+siteDescription: >-
+  Your trusted partner in industrial fabrication, material supply, and hardware
+  solutions.
+     
+logo: /images/logo.svg
+favicon: /favicon.svg
+company:
+  name: KrrishCo
+  tagline: Industrial Excellence
+  description: >-
+    Your trusted partner in industrial fabrication, material supply, and
+    hardware solutions.,
+       
+  location: Hosur, Tamil Nadu
+  foundedYear: '2021'
+  contact:
+    address:
+      street: Karapali
+      city: Hosur
+      state: Tamil Nadu
+      zip: '635109'
+      full: |-
+        Near to Carmel International School, Hosur, Tamil Nadu 635109
+               
+      maps: https://maps.google.com/?q=Karapali,Hosur,Tamil+Nadu+635109
+    phone:
+      primary: +91 8667576940
+      secondary: +91 9944785905
+    email:
+      primary: info@krrishco.in
+      support: nithishsingha@gmail.com
+socialLinks:
+  - platform: twitter
+    url: https://twitter.com/krrishco
+  - platform: linkedin
+    url: https://linkedin.com/company/krrishco
+  - platform: instagram
+    url: https://facebook.com/krrishco
+seoDefaults:
+  defaultTitle: Krrishco
+  defaultOgImage: /images/seoDefaults/defaultOgImage.svg
+analytics: {}
+integrations:
+  forms:
+    tally:
+      formId: 3l0ykX
+  calendar:
+    username: nithish-krishna-ugq2b3

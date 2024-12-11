@@ -1,0 +1,42 @@
+---
+interface Props {
+  text: string;
+  href?: string;
+  type?: 'button' | 'submit';
+  variant?: 'primary' | 'secondary';
+  ariaLabel?: string;
+}
+
+const { 
+  text, 
+  href, 
+  type = 'button',
+  variant = 'primary',
+  ariaLabel
+} = Astro.props;
+
+const baseClasses = "focus:ring-2 focus:ring-offset-2 focus:outline-none";
+const variantClasses = {
+  primary: "bg-primary-600 hover:bg-primary-700 text-white",
+  secondary: "bg-gray-200 hover:bg-gray-300 text-gray-900"
+};
+---
+
+{href ? (
+  <a
+    href={href}
+    class:list={[baseClasses, variantClasses[variant]]}
+    aria-label={ariaLabel || text}
+    rel={href.startsWith('http') ? "noopener noreferrer" : undefined}
+  >
+    {text}
+  </a>
+) : (
+  <button
+    type={type}
+    class:list={[baseClasses, variantClasses[variant]]}
+    aria-label={ariaLabel || text}
+  >
+    {text}
+  </button>
+)} 

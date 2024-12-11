@@ -1,0 +1,150 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+
+// Generate static paths for all portfolio items
+export async function getStaticPaths() {
+  const portfolioEntries = await getCollection('portfolio');
+  return portfolioEntries.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+// Format date
+const formattedDate = new Date(entry.data.completionDate).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+});
+---
+
+<Layout 
+  title={entry.data.seo?.title || `${entry.data.title} | Portfolio`}
+  description={entry.data.seo?.description || entry.data.shortDescription}
+>
+  <article class="container mx-auto px-4 py-12">
+    <!-- Project Header -->
+    <div class="max-w-4xl mx-auto text-center mb-12" data-aos="fade-up">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">{entry.data.title}</h1>
+      <p class="text-xl text-gray-600 mb-6">{entry.data.shortDescription}</p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <span class="text-gray-500">
+          <i class="fas fa-calendar-alt mr-2"></i>
+          {formattedDate}
+        </span>
+        {entry.data.client && (
+          <span class="text-gray-500">
+            <i class="fas fa-user mr-2"></i>
+            {entry.data.client}
+          </span>
+        )}
+      </div>
+    </div>
+
+    <!-- Main Project Image -->
+    <div class="mb-12" data-aos="fade-up">
+      <Image
+        src={entry.data.thumbnail}
+        alt={entry.data.title}
+        width={1200}
+        height={800}
+        class="w-full rounded-lg shadow-lg"
+      />
+    </div>
+
+    <!-- Project Details -->
+    <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <!-- Left Column - Project Info -->
+      <div class="md:col-span-2" data-aos="fade-up">
+        <div class="prose max-w-none">
+          <Content />
+        </div>
+
+        {entry.data.projectChallenges && (
+          <div class="mt-8">
+            <h2 class="text-2xl font-bold mb-4">Challenges</h2>
+            <p class="text-gray-600">{entry.data.projectChallenges}</p>
+          </div>
+        )}
+
+        {entry.data.projectSolutions && (
+          <div class="mt-8">
+            <h2 class="text-2xl font-bold mb-4">Solutions</h2>
+            <p class="text-gray-600">{entry.data.projectSolutions}</p>
+          </div>
+        )}
+      </div>
+
+      <!-- Right Column - Project Details -->
+      <div class="space-y-8" data-aos="fade-up" data-aos-delay="100">
+        {entry.data.services.length > 0 && (
+          <div class="bg-gray-50 p-6 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">Services Provided</h3>
+            <div class="flex flex-wrap gap-2">
+              {entry.data.services.map(service => (
+                <span class="bg-white px-3 py-1 rounded-full text-sm shadow-sm">
+                  {service}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {entry.data.technologies && entry.data.technologies.length > 0 && (
+          <div class="bg-gray-50 p-6 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">Technologies Used</h3>
+            <div class="flex flex-wrap gap-2">
+              {entry.data.technologies.map(tech => (
+                <span class="bg-white px-3 py-1 rounded-full text-sm shadow-sm">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {entry.data.clientTestimonial && (
+          <div class="bg-primary-50 p-6 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">Client Testimonial</h3>
+            <blockquote class="italic text-gray-700">
+              "{entry.data.clientTestimonial}"
+            </blockquote>
+          </div>
+        )}
+
+        {entry.data.projectUrl && (
+          <a
+            href={entry.data.projectUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-block bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors w-full text-center"
+          >
+            View Live Project
+          </a>
+        )}
+      </div>
+    </div>
+
+    <!-- Project Gallery -->
+    {entry.data.projectImages && entry.data.projectImages.length > 0 && (
+      <div class="mt-16" data-aos="fade-up">
+        <h2 class="text-3xl font-bold text-center mb-8">Project Gallery</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {entry.data.projectImages.map((image) => (
+            <Image
+              src={image}
+              alt="Project gallery image"
+              width={600}
+              height={400}
+              class="rounded-lg shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
+            />
+          ))}
+        </div>
+      </div>
+    )}
+  </article>
+</Layout> 

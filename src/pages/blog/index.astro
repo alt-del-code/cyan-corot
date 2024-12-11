@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import SEO from '../../components/SEO.astro';
+
+const posts = await getCollection('blog', ({ data }) => {
+  return import.meta.env.PROD ? !data.isDraft : true;
+});
+
+// Sort posts by date
+const sortedPosts = posts.sort(
+  (a, b) => b.data.publishedDate.valueOf() - a.data.publishedDate.valueOf()
+);
+---
+
+<Layout>
+  <SEO
+    title="Blog | Cyan Corot"
+    description="Read our latest articles and insights"
+  />
+  
+  <main class="container mx-auto px-4 py-16">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-4xl font-bold mb-8">Blog</h1>
+      
+      <div class="grid gap-8 md:grid-cols-2">
+        {
+          sortedPosts.map((post) => (
+            <BlogCard
+              title={post.data.title}
+              excerpt={post.data.excerpt}
+              publishedDate={post.data.publishedDate}
+              coverImage={post.data.coverImage}
+              slug={post.slug}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </main>
+</Layout>

@@ -1,0 +1,377 @@
+---
+import { Icon as AstroIcon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  title: string;
+  subtitle: string;
+  description: string;
+  stats: {
+    projects: string;
+    clients: string;
+    experience: string;
+  };
+  slides: CollectionEntry<'hero-slides'>[];
+  features?: string[];
+  cta?: {
+    text: string;
+    link: string;
+  };
+}
+
+// Get props including slides
+const { title, subtitle, description, stats, slides, features, cta } = Astro.props;
+---
+
+<section class="py-8 md:py-16 lg:py-24 overflow-hidden bg-gradient-to-b from-primary-100 to-white dark:from-dark-bg-soft dark:to-dark-bg">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+      <!-- Content Column -->
+      <div class="space-y-6 md:space-y-8">
+        <div class="space-y-3 md:space-y-4">
+          <h1 
+            class="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-primary-900 dark:text-gray-50 relative group transition-colors duration-300 hover:text-primary-800 dark:hover:text-primary-300"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            {title}
+          </h1>
+          <h2 
+            class="font-heading text-lg md:text-xl lg:text-2xl text-primary-700 dark:text-gray-200 font-semibold"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            {subtitle}
+          </h2>
+        </div>
+
+        <div 
+          class="space-y-4 md:space-y-6 text-gray-600 dark:text-gray-300"
+          data-aos="fade-up"
+          data-aos-delay="300"
+        >
+          <slot name="description" />
+          <p class="text-gray-600 dark:text-gray-300">{description}</p>
+          
+          {features && features.length > 0 && (
+            <ul class="grid grid-cols-2 gap-3 mt-6">
+              {features.map(feature => (
+                <li class="flex items-center text-gray-600 dark:text-gray-300">
+                  <AstroIcon name="lucide:check-circle" class="w-5 h-5 text-primary-600 dark:text-primary-400 mr-2" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div class="mt-8">
+            <a 
+              href={cta?.link || '/contact'} 
+              class="inline-flex items-center px-6 py-3 rounded-xl text-white bg-accent-orange-600 hover:bg-accent-orange-700 transition-colors duration-300"
+            >
+              {cta?.text || 'Request a Quote'}
+              <AstroIcon name="lucide:arrow-right" class="w-5 h-5 ml-2" />
+            </a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6" data-aos="fade-up" data-aos-delay="400">
+          <div class="bg-white/80 dark:bg-dark-surface-soft/90 p-3 md:p-4 rounded-lg shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md group backdrop-blur-sm">
+            <span class="block text-2xl md:text-3xl font-bold text-primary-800 dark:text-primary-300 mb-1 transition-colors group-hover:text-primary-700 dark:group-hover:text-primary-200 counter-animate">
+              {stats.projects}
+            </span>
+            <span class="text-accent-steel-600 dark:text-dark-text-secondary">
+              Projects Completed
+            </span>
+          </div>
+          <div class="bg-white/80 dark:bg-dark-surface-soft/90 p-3 md:p-4 rounded-lg shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-md group backdrop-blur-sm">
+            <span class="block text-2xl md:text-3xl font-bold text-primary-800 dark:text-primary-300 mb-1 transition-colors group-hover:text-primary-700 dark:group-hover:text-primary-200 counter-animate">
+              {stats.clients}
+            </span>
+            <span class="text-gray-600 dark:text-gray-300">
+              Happy Clients
+            </span>
+          </div>
+          <div class="bg-white/80 dark:bg-dark-surface-soft/90 p-3 md:p-4 rounded-lg shadow-sm col-span-2 md:col-span-1 transition-all duration-300 hover:scale-105 hover:shadow-md group backdrop-blur-sm">
+            <span class="block text-2xl md:text-3xl font-bold text-primary-800 dark:text-primary-300 mb-1 transition-colors group-hover:text-primary-700 dark:group-hover:text-primary-200 counter-animate">
+              {stats.experience}
+            </span>
+            <span class="text-gray-600 dark:text-gray-300">
+              Years Experience
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative h-[400px] lg:h-[600px] rounded-xl lg:rounded-2xl overflow-hidden shadow-lg mt-6 lg:mt-0">
+        <div 
+          class="carousel-container absolute inset-0"
+          role="region"
+          aria-label="Image carousel"
+          aria-roledescription="carousel"
+        >
+          {slides.map((slide: CollectionEntry<'hero-slides'>, index: number) => (
+            <div 
+              class={`carousel-slide absolute inset-0 transition-opacity duration-1000 ${index === 0 ? 'opacity-100' : 'opacity-0'}`}
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`Slide ${index + 1} of ${slides.length}: ${slide.data.serviceTitle}`}
+              aria-hidden={index !== 0}
+            >
+              <Image 
+                src={slide.data.image}
+                alt={slide.data.serviceDescription}
+                class="w-full h-full object-cover"
+                width={1920}
+                height={1080}
+                loading="lazy"
+                decoding="async"
+                quality={80}
+                format="webp"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-dark-bg/90 via-dark-bg-soft/50 to-transparent"></div>
+　
+　
+              <div class="absolute bottom-8 md:bottom-12 left-4 right-4 md:left-6 md:right-6 transition-opacity duration-1000">
+                <div class="backdrop-blur-sm bg-white/10 dark:bg-dark-surface-soft/30 rounded-lg p-3 md:p-4 transform transition-all duration-500">
+                  <div class="flex items-start gap-3">
+                    <div class="bg-primary-500/25 backdrop-blur-sm p-2 rounded-lg">
+                      <AstroIcon name={slide.data.icon} class="w-5 h-5 md:w-6 md:h-6 text-white" />
+                    </div>
+                    <div class="flex-1">
+                      <h3 class="text-base md:text-lg font-semibold text-white mb-1">
+                        {slide.data.serviceTitle}
+                      </h3>
+                      <p class="text-sm md:text-base text-gray-100 mb-2 line-clamp-2 md:line-clamp-none">
+                        {slide.data.serviceDescription}
+                      </p>
+                      <a 
+                        href={slide.data.link} 
+                        class="inline-flex items-center text-xs md:text-sm text-white font-medium group hover:text-primary-300"
+                      >
+                        Learn More 
+                        <AstroIcon 
+                          name="lucide:arrow-right" 
+                          class="w-3 h-3 md:w-4 md:h-4 ml-1 transform transition-transform group-hover:translate-x-1" 
+                        />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          <!-- Add Navigation Controls -->
+          <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+            {slides.map((_, index) => (
+              <button
+                type="button"
+                class="w-3 h-3 rounded-full bg-white/50 transition-all duration-300"
+                aria-label={`Go to slide ${index + 1}`}
+                aria-current={index === 0 ? 'true' : 'false'}
+                data-index={index}
+              />
+            ))}
+          </div>
+
+          <!-- Add Previous/Next Buttons -->
+          <div class="absolute inset-y-0 left-0 flex items-center">
+            <button
+              type="button"
+              class="p-2 bg-black/20 hover:bg-black/30 text-white rounded-r-lg transition-colors"
+              aria-label="Previous slide"
+              id="prev-slide"
+            >
+              <AstroIcon name="lucide:chevron-left" class="w-6 h-6" />
+            </button>
+          </div>
+          <div class="absolute inset-y-0 right-0 flex items-center">
+            <button
+              type="button"
+              class="p-2 bg-black/20 hover:bg-black/30 text-white rounded-l-lg transition-colors"
+              aria-label="Next slide"
+              id="next-slide"
+            >
+              <AstroIcon name="lucide:chevron-right" class="w-6 h-6" />
+            </button>
+          </div>
+
+          <!-- Add Live Region -->
+          <div 
+            class="sr-only"
+            aria-live="polite"
+            aria-atomic="true"
+            id="carousel-status"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes fade-in {
+    from { 
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.8s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .group:hover .counter-animate {
+    animation: pulse 0.6s ease-in-out;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+</style>
+
+<script>
+  function setupCarousel() {
+    const container = document.querySelector('.carousel-container');
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('[data-index]');
+    const prevButton = document.getElementById('prev-slide');
+    const nextButton = document.getElementById('next-slide');
+    const statusRegion = document.getElementById('carousel-status');
+    let currentSlide = 0;
+    const slideCount = slides.length;
+
+    function updateSlides(newIndex: number) {
+      // Update slides visibility
+      slides.forEach((slide, index) => {
+        slide.classList.toggle('opacity-100', index === newIndex);
+        slide.classList.toggle('opacity-0', index !== newIndex);
+        slide.setAttribute('aria-hidden', String(index !== newIndex));
+      });
+
+      // Update dots
+      dots.forEach((dot, index) => {
+        dot.setAttribute('aria-current', String(index === newIndex));
+        dot.classList.toggle('bg-white', index === newIndex);
+        dot.classList.toggle('bg-white/50', index !== newIndex);
+      });
+
+      // Announce slide change to screen readers
+      const currentSlideElement = slides[newIndex] as HTMLElement;
+      const slideTitle = currentSlideElement.getAttribute('aria-label');
+      if (statusRegion) {
+        statusRegion.textContent = `Showing ${slideTitle}`;
+      }
+
+      currentSlide = newIndex;
+    }
+
+    function nextSlide() {
+      const newIndex = (currentSlide + 1) % slideCount;
+      updateSlides(newIndex);
+    }
+
+    function prevSlide() {
+      const newIndex = (currentSlide - 1 + slideCount) % slideCount;
+      updateSlides(newIndex);
+    }
+
+    // Event Listeners
+    prevButton?.addEventListener('click', prevSlide);
+    nextButton?.addEventListener('click', nextSlide);
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => updateSlides(index));
+    });
+
+    // Keyboard Navigation
+    container?.addEventListener('keydown', ((e: Event) => {
+      const event = e as KeyboardEvent;
+      if (event.key === 'ArrowLeft') {
+        prevSlide();
+      } else if (event.key === 'ArrowRight') {
+        nextSlide();
+      } else if (event.key === 'Home') {
+        updateSlides(0);
+      } else if (event.key === 'End') {
+        updateSlides(slideCount - 1);
+      }
+    }));
+
+    // Auto-advance slides
+    const autoPlayInterval = setInterval(nextSlide, 5000);
+
+    // Pause auto-advance when focused
+    container?.addEventListener('focus', () => clearInterval(autoPlayInterval), true);
+    container?.addEventListener('mouseover', () => clearInterval(autoPlayInterval));
+
+    // Resume auto-advance when focus is lost
+    container?.addEventListener('blur', () => setInterval(nextSlide, 5000), true);
+    container?.addEventListener('mouseout', () => setInterval(nextSlide, 5000));
+  }
+
+  setupCarousel();
+
+  if (import.meta.hot) {
+    import.meta.hot.accept(() => {
+      setupCarousel();
+    });
+  }
+
+  const counterElements = document.querySelectorAll('.counter-animate');
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const target = entry.target as HTMLElement;
+        const value = target.textContent;
+        if (value && value.includes('+')) {
+          const number = parseInt(value.replace('+', ''));
+          animateCounter(target as HTMLElement, 0, number);
+        }
+      }
+    });
+  }, { threshold: 0.5 });
+
+  counterElements.forEach(el => observer.observe(el));
+
+  function animateCounter(element: HTMLElement, start: number, end: number) {
+    let current = start;
+    const increment = Math.ceil(end / 30);
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= end) {
+        element.textContent = end + '+';
+        clearInterval(timer);
+      } else {
+        element.textContent = current + '+';
+      }
+    }, 50);
+  }
+</script> 

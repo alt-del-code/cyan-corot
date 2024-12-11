@@ -1,0 +1,423 @@
+---
+import { Icon as AstroIcon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import { getEntry } from 'astro:content';
+
+// Get site settings
+const site = await getEntry('settings', 'site');
+if (!site || !site.data) {
+    throw new Error("Site settings not found");
+}
+const { siteName, logo, company } = site.data;
+
+const menuItems = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Portfolio", href: "/portfolio" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" }
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<nav class="sticky top-0 w-full z-50 transition-all duration-500 px-4 py-2" id="main-nav">
+  <div class="max-w-7xl mx-auto">
+    <div class="bg-white/40 dark:bg-dark-surface/30 backdrop-blur-xl shadow-lg rounded-2xl border border-gray-200/20 dark:border-white/5">
+      <div class="container mx-auto px-6">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo -->
+          <div class="flex-shrink-0">
+            <a 
+              href="/" 
+              class="flex items-center gap-3 group"
+            >
+              <Image 
+                src={logo}
+                alt={`${company.name} Logo`}
+                width={40}
+                height={40}
+                class="transition-transform duration-300 group-hover:scale-105"
+              />
+              <div class="flex flex-col">
+                <span class="text-lg font-bold leading-tight text-primary-800 dark:text-dark-text-primary group-hover:text-primary-700 dark:group-hover:text-primary-500">
+                    {company.name}
+                  </span>
+                  <span class="text-xs text-accent-steel-600 dark:text-dark-text-secondary">
+                    {company.tagline}
+                </span>
+              </div>
+            </a>
+          </div>
+          
+          <!-- Desktop Menu -->
+          <div class="hidden md:block">
+            <div class="flex items-center gap-2">
+              {menuItems.map(item => {
+                const isActive = currentPath === item.href || 
+                  (item.href !== '/' && currentPath.startsWith(item.href));
+                
+                return (
+                  <a
+                    href={item.href}
+                    class:list={[
+                      'px-4 py-2 text-sm font-medium transition-all duration-300 relative',
+                      'hover:text-primary-700 dark:hover:text-primary-400 group',
+                      {
+                        'text-primary-800 dark:text-primary-400': isActive,
+                        'text-accent-steel-600 dark:text-dark-text-secondary': !isActive
+                      }
+                    ]}
+                  >
+                    {item.label}
+                    <span class:list={[
+                      'absolute bottom-0 left-0 w-full h-0.5 bg-primary-600 dark:bg-primary-400 transform origin-left transition-transform duration-300',
+                      {
+                        'scale-x-100': isActive,
+                        'scale-x-0 group-hover:scale-x-100': !isActive
+                      }
+                    ]}></span>
+                  </a>
+                );
+              })}
+              <button
+                id="theme-toggle"
+                type="button"
+                class="p-2 rounded-xl text-primary-800 dark:text-dark-text-secondary hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-100/50 dark:hover:bg-primary-900/50 transition-all duration-300 flex items-center justify-center"
+                aria-label="Toggle dark mode"
+              >
+                <AstroIcon name="lucide:sun" class="w-5 h-5 dark:hidden" />
+                <AstroIcon name="lucide:moon" class="w-5 h-5 hidden dark:block" />
+              </button>
+              <a
+                href="/contact"
+                class="inline-flex items-center ml-2 px-5 py-2 rounded-xl text-sm font-medium bg-accent-orange-600 text-white transition-all duration-300 hover:shadow-lg hover:shadow-accent-orange-600/20 hover:bg-accent-orange-700 active:scale-95"
+              >
+                Get Quote/Contact
+              </a>
+            </div>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <div class="md:hidden">
+            <button
+              type="button"
+              class="mobile-menu-button p-2 rounded-xl text-primary-600 hover:text-primary-700 hover:bg-primary-100/50 transition-all duration-300"
+              aria-label="Toggle menu"
+            >
+              <AstroIcon name="lucide:menu" class="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div 
+          class="mobile-menu hidden md:hidden"
+          style="content-visibility: auto;"
+        >
+          <div class="pt-2 pb-4 space-y-1">
+            {menuItems.map(item => {
+              const isActive = currentPath === item.href || 
+                (item.href !== '/' && currentPath.startsWith(item.href));
+              
+              return (
+                <a
+                  href={item.href}
+                  class:list={[
+                    'block px-4 py-2.5 text-base font-medium transition-colors duration-300 relative group',
+                    'hover:text-primary-700',
+                    {
+                      'text-primary-700': isActive,
+                      'text-primary-600': !isActive
+                    }
+                  ]}
+                >
+                  {item.label}
+                  <span class:list={[
+                    'absolute bottom-0 left-0 w-full h-0.5 bg-primary-600 transform origin-left transition-transform duration-300',
+                    {
+                      'scale-x-100': isActive,
+                      'scale-x-0 group-hover:scale-x-100': !isActive
+                    }
+                  ]}></span>
+                </a>
+              );
+            })}
+            <div class="pt-2">
+              <button
+                id="theme-toggle-mobile"
+                type="button"
+                class="w-full text-left px-4 py-2.5 text-base font-medium transition-all duration-300 text-primary-600 hover:text-primary-700 flex items-center gap-2"
+              >
+                <AstroIcon name="lucide:sun" class="w-5 h-5 dark:hidden" />
+                <AstroIcon name="lucide:moon" class="w-5 h-5 hidden dark:block" />
+                
+              </button>
+              <a
+                href="/contact"
+                class="inline-flex items-center justify-center w-full px-4 py-2.5 rounded-xl text-base font-medium bg-accent-orange-600 text-white hover:bg-accent-orange-700 transition-all duration-300"
+              >
+                Get Quote/Contact
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* Replace opacity transitions with display for better performance */
+  .mobile-menu {
+    display: none;
+    transform-origin: top;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .mobile-menu:not(.hidden) {
+    display: block;
+  }
+
+  /* Add theme transition class */
+  :root {
+    /* Pre-define both light and dark theme variables */
+    --light-bg: #ffffff;
+    --dark-bg: #1D2A44;
+    --light-text: #4F4F4F;
+    --dark-text: #EAEAEA;
+  }
+
+  /* Apply theme variables immediately without transition */
+  :root:not(.theme-transition) {
+    background-color: var(--light-bg);
+    color: var(--light-text);
+  }
+
+  :root.dark:not(.theme-transition) {
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
+  }
+
+  /* Only apply transitions when theme-transition class is present */
+  .theme-transition {
+    transition: background-color 0.5s ease-in-out,
+                color 0.3s ease-in-out;
+  }
+
+  /* Enhanced Glassmorphism effect */
+  #main-nav > div > div {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                backdrop-filter 0.5s ease-in-out;
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 102, 204, 0.05),
+      0 2px 4px -1px rgba(0, 102, 204, 0.03),
+      inset 0 0 20px rgba(255, 255, 255, 0.2);
+  }
+
+  /* Add transition timing function for theme changes */
+  :global(.dark) #main-nav > div > div {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                backdrop-filter 0.5s ease-in-out,
+                background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.05),
+      0 2px 4px -1px rgba(0, 0, 0, 0.03),
+      inset 0 0 20px rgba(255, 255, 255, 0.02);
+  }
+
+  /* Enhanced Floating effect on scroll */
+  #main-nav.scrolled > div > div {
+    @apply bg-white/60 dark:bg-dark-surface/60;
+    box-shadow: 
+      0 10px 30px -10px rgba(0, 102, 204, 0.15),
+      0 4px 6px -1px rgba(0, 102, 204, 0.08),
+      inset 0 0 20px rgba(255, 255, 255, 0.3);
+  }
+
+  :global(.dark) #main-nav.scrolled > div > div {
+    @apply bg-dark-surface-soft/40;
+    box-shadow: 
+      0 10px 30px -10px rgba(0, 0, 0, 0.15),
+      0 4px 6px -1px rgba(0, 0, 0, 0.05),
+      inset 0 0 20px rgba(255, 255, 255, 0.03);
+  }
+
+  /* Optional: Add subtle gradient */
+  #main-nav > div > div::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1rem;
+    padding: 1px;
+    background: linear-gradient(
+      to bottom right, 
+      rgba(255, 255, 255, 0.1), 
+      rgba(255, 255, 255, 0.03)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Underline animation */
+  .group:hover span {
+    transform: scaleX(1);
+  }
+</style>
+
+<script>
+  const navbar = document.getElementById('main-nav');
+  let lastScroll = 0;
+
+  // Scroll handler
+  window.addEventListener('scroll', () => {
+    const currentScroll = window.scrollY;
+
+    if (currentScroll <= 0) {
+      navbar?.classList.remove('scrolled', '-translate-y-full');
+      return;
+    }
+
+    if (currentScroll > lastScroll && currentScroll > 100) {
+      navbar?.classList.add('-translate-y-full');
+    } else {
+      navbar?.classList.remove('-translate-y-full');
+      navbar?.classList.add('scrolled');
+    }
+
+    lastScroll = currentScroll;
+  });
+
+  // Theme functionality
+  function setupThemeToggle() {
+    const themeToggles = document.querySelectorAll('#theme-toggle, #theme-toggle-mobile');
+    
+    const getPreferredTheme = (): 'dark' | 'light' => {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark' || savedTheme === 'light') {
+        return savedTheme;
+      }
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+
+    const applyTheme = (theme: 'dark' | 'light') => {
+      // Add theme class before any visual changes
+      document.documentElement.classList.add('theme-transition');
+      
+      // Force a reflow to ensure transition class is applied
+      document.documentElement.offsetHeight;
+
+      // Apply theme
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      
+      localStorage.setItem('theme', theme);
+
+      // Remove transition class after animation
+      setTimeout(() => {
+        document.documentElement.classList.remove('theme-transition');
+      }, 500);
+    };
+
+    // Initial theme setup
+    applyTheme(getPreferredTheme());
+
+    // Toggle theme
+    themeToggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const isDark = document.documentElement.classList.contains('dark');
+        applyTheme(isDark ? 'light' : 'dark');
+      });
+    });
+
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        applyTheme(e.matches ? 'dark' : 'light');
+      }
+    });
+  }
+
+  // Mobile menu functionality
+  function setupMobileMenu() {
+    const mobileMenuButton = document.querySelector('.mobile-menu-button');
+    const mobileMenu = document.querySelector('.mobile-menu');
+
+    if (mobileMenuButton && mobileMenu) {
+      // Toggle menu
+      mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (event) => {
+        if (!mobileMenu.contains(event.target as Node) && 
+            !mobileMenuButton.contains(event.target as Node)) {
+          mobileMenu.classList.add('hidden');
+        }
+      });
+    }
+  }
+
+  // Performance optimizations
+  function setupPerformanceOptimizations() {
+    // Add content-visibility for off-screen sections
+    document.querySelectorAll('section').forEach(section => {
+      section.style.contentVisibility = 'auto';
+    });
+
+    // Optimize image loading
+    document.querySelectorAll('img').forEach(img => {
+      if (!img.hasAttribute('width') || !img.hasAttribute('height')) {
+        img.setAttribute('width', '100%');
+        img.setAttribute('height', 'auto');
+      }
+    });
+  }
+
+  // Initialize all functionality
+  function init() {
+    setupThemeToggle();
+    setupMobileMenu();
+    setupPerformanceOptimizations();
+  }
+
+  init();
+
+  // Hot module replacement support
+  if (import.meta.hot) {
+    import.meta.hot.accept(() => {
+      init();
+    });
+  }
+
+  // Handle modal functionality
+  const modal = document.getElementById('quote-modal');
+  const openBtn = document.getElementById('get-quote-btn');
+  const closeBtn = document.querySelector('[data-close-modal]');
+  const modalOverlay = document.querySelector('[data-modal-overlay]');
+
+  function toggleModal(show: boolean) {
+    if (show) {
+      modal?.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    } else {
+      modal?.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+  }
+
+  openBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggleModal(true);
+  });
+
+  closeBtn?.addEventListener('click', () => toggleModal(false));
+  modalOverlay?.addEventListener('click', () => toggleModal(false));
+</script>

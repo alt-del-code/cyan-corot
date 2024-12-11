@@ -1,0 +1,77 @@
+---
+interface Props {
+  categories: string[];
+  tags: string[];
+}
+
+const { categories, tags } = Astro.props;
+---
+
+<div class="flex flex-wrap gap-4" data-aos="fade-up">
+  <div class="space-y-2">
+    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Categories</label>
+    <div class="flex flex-wrap gap-2">
+      <button
+        class="px-4 py-2 text-sm rounded-full bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-100 transition-colors"
+        data-filter="all"
+      >
+        All
+      </button>
+      {categories.map(category => (
+        <button
+          class="px-4 py-2 text-sm rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 transition-colors"
+          data-filter={category}
+        >
+          {category}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div class="space-y-2">
+    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Tags</label>
+    <div class="flex flex-wrap gap-2">
+      {tags.map(tag => (
+        <button
+          class="px-3 py-1 text-sm rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 transition-colors"
+          data-tag={tag}
+        >
+          {tag}
+        </button>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script>
+  const filterButtons = document.querySelectorAll('[data-filter]');
+  const tagButtons = document.querySelectorAll('[data-tag]');
+
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      filterButtons.forEach(btn => btn.classList.remove('bg-blue-100', 'text-blue-800'));
+      button.classList.add('bg-blue-100', 'text-blue-800');
+      
+      const category = button.getAttribute('data-filter');
+      document.dispatchEvent(new CustomEvent('portfolio:filter', { 
+        detail: { category } 
+      }));
+    });
+  });
+
+  tagButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      button.classList.toggle('bg-blue-100');
+      button.classList.toggle('text-blue-800');
+      
+      const activeTagButtons = document.querySelectorAll('[data-tag].bg-blue-100');
+      const activeTags = Array.from(activeTagButtons).map(btn => 
+        btn.getAttribute('data-tag')
+      );
+      
+      document.dispatchEvent(new CustomEvent('portfolio:tags', { 
+        detail: { tags: activeTags } 
+      }));
+    });
+  });
+</script> 

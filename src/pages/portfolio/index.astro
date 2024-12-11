@@ -1,0 +1,38 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PortfolioGrid from '../../components/portfolio/PortfolioGrid.astro';
+import PortfolioFilters from '../../components/portfolio/PortfolioFilters.astro';
+import SearchBar from '../../components/portfolio/SearchBar.astro';
+import SEO from '../../components/SEO.astro';
+import { getCollection } from 'astro:content';
+
+const portfolioItems = await getCollection('portfolio');
+
+const allCategories = [...new Set(portfolioItems.map(item => item.data.category))];
+const allTags = [...new Set(portfolioItems.flatMap(item => item.data.tags || []))];
+
+const seo = {
+  title: 'Portfolio | Our Work',
+  description: 'Explore our portfolio of successful projects and client collaborations.',
+};
+---
+
+<Layout>
+  <SEO {...seo} />
+  <main class="py-16 sm:py-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-8">Our Portfolio</h1>
+      
+      <div class="mb-8 space-y-4">
+        <SearchBar client:load />
+        <PortfolioFilters 
+          categories={allCategories}
+          tags={allTags}
+          client:load
+        />
+      </div>
+
+      <PortfolioGrid items={portfolioItems} client:load />
+    </div>
+  </main>
+</Layout>

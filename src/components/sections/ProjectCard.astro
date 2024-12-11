@@ -1,0 +1,83 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  image: {
+    src: string;
+    alt: string;
+  };
+  category?: string;
+  tags?: string[];
+  link?: {
+    text: string;
+    href: string;
+  };
+  class?: string;
+}
+
+const {
+  title,
+  description,
+  image,
+  category,
+  tags,
+  link,
+  class: className
+} = Astro.props;
+
+import { Icon } from 'astro-icon/components';
+---
+
+<div
+  class:list={[
+    "group bg-white dark:bg-dark-surface rounded-xl overflow-hidden",
+    "border border-gray-200 dark:border-gray-700",
+    "transition-all duration-300 hover:shadow-lg",
+    className
+  ]}
+>
+  <div class="relative aspect-video overflow-hidden">
+    <img
+      src={image.src}
+      alt={image.alt}
+      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+    />
+    {category && (
+      <div class="absolute top-4 left-4">
+        <span class="px-3 py-1 text-sm font-medium rounded-full bg-black/50 backdrop-blur-sm text-white">
+          {category}
+        </span>
+      </div>
+    )}
+  </div>
+
+  <div class="p-6">
+    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      {title}
+    </h3>
+
+    <p class="text-gray-600 dark:text-gray-400 mb-4">
+      {description}
+    </p>
+
+    {tags && tags.length > 0 && (
+      <div class="flex flex-wrap gap-2 mb-4">
+        {tags.map(tag => (
+          <span class="px-2 py-1 text-xs font-medium rounded-md bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+
+    {link && (
+      <a
+        href={link.href}
+        class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
+      >
+        <span>{link.text}</span>
+        <Icon name="lucide:arrow-right" class="w-4 h-4 ml-1" />
+      </a>
+    )}
+  </div>
+</div> 

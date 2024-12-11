@@ -1,0 +1,58 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+  buttonText: string;
+  formId: string;
+  class?: string;
+}
+
+const { 
+  buttonText,
+  formId,
+  class: className = ""
+} = Astro.props;
+---
+
+<button
+  type="button"
+  class={className}
+  data-tally-open={formId}
+  aria-label={buttonText}
+>
+  {buttonText}
+  <Icon name="ph:arrow-right-bold" class="w-5 h-5 ml-2 inline-block" />
+</button>
+
+<script>
+  // Type-safe event handler
+  declare global {
+    interface Window {
+      Tally?: {
+        openPopup: (formId: string) => void;
+      };
+    }
+  }
+
+  // Initialize Tally buttons
+  function initTallyButtons() {
+    document.querySelectorAll('[data-tally-open]').forEach(button => {
+      button.addEventListener('click', () => {
+        const formId = button.getAttribute('data-tally-open');
+        if (formId && window.Tally) {
+          window.Tally.openPopup(formId);
+        }
+      });
+    });
+  }
+
+  // Run initialization
+  initTallyButtons();
+
+  // Support for hot module replacement
+  if (import.meta.hot) {
+    import.meta.hot.accept(() => {
+      initTallyButtons();
+    });
+  }
+</script> 

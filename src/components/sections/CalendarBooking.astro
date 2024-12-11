@@ -1,0 +1,26 @@
+---
+import config from '../../config';
+
+interface Props {
+    username?: string;
+    width?: string;
+    height?: string;
+}
+
+const { 
+    username = config.integrations.calendar.username, 
+    width = config.integrations.calendar.defaultWidth, 
+    height = config.integrations.calendar.defaultHeight 
+} = Astro.props;
+---
+
+<div class="w-full">
+    <iframe
+        src={`https://cal.com/${username}`}
+        width={width}
+        height={height}
+        style="min-width: 320px; border: 0;"
+        data-cal-link={username}
+    >
+    </iframe>
+</div>

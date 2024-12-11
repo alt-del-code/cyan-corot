@@ -1,0 +1,26 @@
+---
+import config from '@/config';
+
+interface Props {
+  formId?: string;
+  width?: string;
+  height?: string;
+}
+
+const {
+  formId = config.integrations.forms.tally.contact.formId,
+  width = config.integrations.forms.defaultWidth,
+  height = config.integrations.forms.defaultHeight,
+} = Astro.props;
+---
+
+<div class="w-full">
+  <iframe
+    src={`https://tally.so/embed/${formId}`}
+    width={width}
+    height={height}
+    style="border: 0; margin: 0; padding: 0;"
+    title="Contact Form"
+  >
+  </iframe>
+</div>

@@ -1,0 +1,98 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+// Define the portfolio entry type
+type PortfolioData = {
+  title: string;
+  category: string;
+  tags: string[];
+  shortDescription: string;
+  thumbnail: string;
+  // ... other fields
+};
+
+interface Props {
+  items: CollectionEntry<'portfolio'>[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-portfolio-grid>
+  {items.map(item => {
+    const itemData = item.data as unknown as PortfolioData;
+    return (
+      <a 
+        href={`/portfolio/${item.slug}`}
+        class="group relative overflow-hidden rounded-lg shadow-lg transition-transform hover:scale-105"
+        data-category={itemData.category}
+        data-tags={itemData.tags?.join(',')}
+        data-aos="fade-up"
+      >
+        <img
+          src={itemData.thumbnail}
+          alt={itemData.title}
+          class="w-full h-64 object-cover"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+          <div class="absolute bottom-0 p-6 text-white">
+            <h3 class="text-xl font-bold mb-2">{itemData.title}</h3>
+            <p class="text-sm">{itemData.shortDescription}</p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              {itemData.tags?.map((tag: string) => (
+                <span class="px-2 py-1 text-xs bg-white/20 rounded-full">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </a>
+    );
+  })}
+</div>
+
+<script>
+  let currentCategory = 'all';
+  let currentTags: string[] = [];
+  let currentSearch = '';
+
+  function filterItems() {
+    const items = document.querySelectorAll('[data-portfolio-grid] > a');
+    
+    items.forEach(item => {
+      const itemCategory = item.getAttribute('data-category');
+      const itemTags = item.getAttribute('data-tags')?.split(',') || [];
+      const itemTitle = item.querySelector('h3')?.textContent?.toLowerCase() || '';
+      const itemDesc = item.querySelector('p')?.textContent?.toLowerCase() || '';
+
+      const matchesCategory = currentCategory === 'all' || itemCategory === currentCategory;
+      const matchesTags = currentTags.length === 0 || 
+        currentTags.every(tag => itemTags.includes(tag));
+      const matchesSearch = !currentSearch || 
+        itemTitle.includes(currentSearch) || 
+        itemDesc.includes(currentSearch);
+
+      if (matchesCategory && matchesTags && matchesSearch) {
+        item.classList.remove('hidden');
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+  }
+
+  document.addEventListener('portfolio:filter', ((e: CustomEvent) => {
+    currentCategory = e.detail.category;
+    filterItems();
+  }) as EventListener);
+
+  document.addEventListener('portfolio:tags', ((e: CustomEvent) => {
+    currentTags = e.detail.tags;
+    filterItems();
+  }) as EventListener);
+
+  document.addEventListener('portfolio:search', ((e: CustomEvent) => {
+    currentSearch = e.detail.searchTerm;
+    filterItems();
+  }) as EventListener);
+</script> 

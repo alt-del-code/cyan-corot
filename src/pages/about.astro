@@ -1,0 +1,334 @@
+---
+import { getEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Container from '../components/Container.astro';
+import { Icon } from 'astro-icon/components';
+
+// Handle undefined case for about data
+const aboutEntry = await getEntry('about', 'about');
+if (!aboutEntry) {
+	throw new Error('About page content not found');
+}
+
+// Destructure data with default values to handle undefined
+const { 
+	meta = {
+		title: undefined,
+		description: undefined,
+		keywords: undefined,
+		ogImage: undefined
+	},
+	title,
+	subtitle,
+	intro,
+	stats,
+	vision,
+	mission,
+	values,
+	team,
+	milestones,
+	contactInfo,
+	history,
+	testimonials,
+	faqs,
+	awards,
+	videoEmbed,
+	ctaButton
+} = aboutEntry.data;
+
+// Prepare SEO props
+const seoProps = {
+	title: meta?.title || title,
+	description: meta?.description,
+	keywords: meta?.keywords,
+	image: meta?.ogImage
+};
+---
+
+<Layout {...seoProps}>
+	<Container>
+		<div class="py-16 space-y-24">
+			<!-- Hero Section with improved styling -->
+			<section class="text-center space-y-6 max-w-4xl mx-auto" data-aos="fade-up">
+				<h1 class="heading-1 bg-gradient-to-r from-primary-600 to-accent-orange-500 text-transparent bg-clip-text">
+					{title}
+				</h1>
+				{subtitle && <p class="text-xl text-gray-600 dark:text-gray-300 font-medium">{subtitle}</p>}
+				{intro && (
+					<div class="mt-8 text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+						{intro}
+					</div>
+				)}
+			</section>
+
+			<!-- Stats Section with animation -->
+			{stats && stats.length > 0 && (
+				<section class="py-16 bg-gradient-to-b from-primary-50 to-transparent dark:from-primary-900/20 dark:to-transparent rounded-3xl">
+					<div class="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto px-6">
+						{stats.map((stat, index) => (
+							<div 
+								class="text-center space-y-4 card p-8 hover:scale-105 transition-transform"
+								data-aos="fade-up"
+								data-aos-delay={index * 100}
+							>
+								<div class="text-5xl font-bold bg-gradient-to-r from-primary-600 to-accent-orange-500 text-transparent bg-clip-text">
+									{stat.value}
+								</div>
+								<div class="text-xl font-semibold text-gray-800 dark:text-gray-100">{stat.label}</div>
+								{stat.description && (
+									<p class="text-gray-600 dark:text-gray-300">{stat.description}</p>
+								)}
+							</div>
+						))}
+					</div>
+				</section>
+			)}
+
+			<!-- Vision & Mission with improved layout -->
+			{(vision || mission) && (
+				<section class="grid gap-12 md:grid-cols-2 max-w-6xl mx-auto" data-aos="fade-up">
+					{vision && (
+						<div class="card p-8 space-y-4 hover:shadow-xl dark:hover:shadow-primary-500/10">
+							<div class="flex items-center gap-4">
+								<Icon name="lucide:eye" class="w-8 h-8 text-primary-600" />
+								<h2 class="text-2xl font-bold">Our Vision</h2>
+							</div>
+							<p class="text-gray-600 dark:text-gray-300 leading-relaxed">{vision}</p>
+						</div>
+					)}
+					{mission && (
+						<div class="card p-8 space-y-4 hover:shadow-xl dark:hover:shadow-primary-500/10">
+							<div class="flex items-center gap-4">
+								<Icon name="lucide:target" class="w-8 h-8 text-accent-orange-500" />
+								<h2 class="text-2xl font-bold">Our Mission</h2>
+							</div>
+							<p class="text-gray-600 dark:text-gray-300 leading-relaxed">{mission}</p>
+						</div>
+					)}
+				</section>
+			)}
+
+			<!-- Values with improved cards -->
+			{values && values.length > 0 && (
+				<section class="py-16" data-aos="fade-up">
+					<h2 class="heading-2 text-center mb-16">Our Values</h2>
+					<div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+						{values.map((value, index) => (
+							<div 
+								class="card p-8 text-center space-y-6 hover:scale-105 transition-transform"
+								data-aos="fade-up"
+								data-aos-delay={index * 100}
+							>
+								<Icon 
+									name={value.icon} 
+									class="w-16 h-16 mx-auto text-primary-600 dark:text-primary-400" 
+								/>
+								<h3 class="text-xl font-semibold">{value.title}</h3>
+								{value.description && (
+									<p class="text-gray-600 dark:text-gray-300">{value.description}</p>
+								)}
+							</div>
+						))}
+					</div>
+				</section>
+			)}
+
+			<!-- Team Section with improved cards -->
+			{team && team.length > 0 && (
+				<section class="py-16 bg-gradient-to-b from-primary-50 to-transparent dark:from-primary-900/20 dark:to-transparent rounded-3xl" data-aos="fade-up">
+					<h2 class="heading-2 text-center mb-16">Our Team</h2>
+					<div class="grid gap-12 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto px-6">
+						{team.map((member, index) => (
+							<div 
+								class="card p-6 text-center space-y-6 hover:shadow-xl dark:hover:shadow-primary-500/10"
+								data-aos="fade-up"
+								data-aos-delay={index * 100}
+							>
+								{member.image && (
+									<div class="relative w-40 h-40 mx-auto">
+										<img 
+											src={member.image} 
+											alt={member.name}
+											class="rounded-full object-cover w-full h-full ring-4 ring-primary-100 dark:ring-primary-900"
+										/>
+									</div>
+								)}
+								<div class="space-y-2">
+									<h3 class="text-xl font-bold">{member.name}</h3>
+									<p class="text-primary-600 dark:text-primary-400 font-medium">{member.position}</p>
+								</div>
+								{member.bio && (
+									<p class="text-gray-600 dark:text-gray-300">{member.bio}</p>
+								)}
+								{member.socialLinks && member.socialLinks.length > 0 && (
+									<div class="flex justify-center gap-6">
+										{member.socialLinks.map(link => (
+											<a 
+												href={link.url} 
+												target="_blank" 
+												rel="noopener noreferrer"
+												class="text-gray-600 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"
+											>
+												<Icon name={link.platform} class="w-6 h-6" />
+											</a>
+										))}
+									</div>
+								)}
+							</div>
+						))}
+					</div>
+				</section>
+			)}
+
+			<!-- Milestones -->
+			{milestones && milestones.length > 0 && (
+				<section class="py-12">
+					<h2 class="text-3xl font-bold text-center mb-12">Our Journey</h2>
+					<div class="space-y-8">
+						{milestones.map((milestone, index) => (
+							<div class={`flex gap-8 items-center ${index % 2 === 0 ? '' : 'flex-row-reverse'}`}>
+								<div class="flex-1 space-y-4">
+									<div class="text-xl font-bold">{milestone.year}</div>
+									<h3 class="text-2xl font-semibold">{milestone.title}</h3>
+									{milestone.description && <p class="text-gray-600">{milestone.description}</p>}
+								</div>
+								{milestone.image && (
+									<div class="flex-1">
+										<img 
+											src={milestone.image} 
+											alt={milestone.title}
+											class="rounded-lg w-full"
+										/>
+									</div>
+								)}
+							</div>
+						))}
+					</div>
+				</section>
+			)}
+
+			<!-- Contact Info -->
+			{contactInfo && (
+				<section class="py-12 text-center">
+					<h2 class="text-3xl font-bold mb-8">Contact Us</h2>
+					<div class="grid gap-6 md:grid-cols-3">
+						{contactInfo.phone && (
+							<div>
+								<Icon name="lucide:phone" class="w-8 h-8 mx-auto mb-4" />
+								<p>{contactInfo.phone}</p>
+							</div>
+						)}
+						{contactInfo.email && (
+							<div>
+								<Icon name="lucide:mail" class="w-8 h-8 mx-auto mb-4" />
+								<p>{contactInfo.email}</p>
+							</div>
+						)}
+						{contactInfo.address && (
+							<div>
+								<Icon name="lucide:map-pin" class="w-8 h-8 mx-auto mb-4" />
+								<p>{contactInfo.address}</p>
+							</div>
+						)}
+					</div>
+				</section>
+			)}
+
+			<!-- History -->
+			{history && (
+				<section class="py-12">
+					<h2 class="text-3xl font-bold text-center mb-8">Our History</h2>
+					<div class="prose prose-lg mx-auto">
+						{history}
+					</div>
+				</section>
+			)}
+
+			<!-- Testimonials -->
+			{testimonials && testimonials.length > 0 && (
+				<section class="py-12 bg-gray-50">
+					<h2 class="text-3xl font-bold text-center mb-12">What People Say</h2>
+					<div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+						{testimonials.map(testimonial => (
+							<div class="bg-white p-6 rounded-lg shadow-sm">
+								<p class="text-gray-600 italic mb-4">"{testimonial.testimonial}"</p>
+								<div class="flex items-center">
+									{testimonial.customerImage && (
+										<img 
+											src={testimonial.customerImage} 
+											alt={testimonial.customerName}
+											class="w-12 h-12 rounded-full mr-4"
+										/>
+									)}
+									<div class="font-medium">{testimonial.customerName}</div>
+								</div>
+							</div>
+						))}
+					</div>
+				</section>
+			)}
+
+			<!-- FAQs -->
+			{faqs && faqs.length > 0 && (
+				<section class="py-12">
+					<h2 class="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+					<div class="max-w-3xl mx-auto space-y-6">
+						{faqs.map(faq => (
+							<div class="border-b border-gray-200 pb-6">
+								<h3 class="text-xl font-semibold mb-2">{faq.question}</h3>
+								<p class="text-gray-600">{faq.answer}</p>
+							</div>
+						))}
+					</div>
+				</section>
+			)}
+
+			<!-- Awards -->
+			{awards && awards.length > 0 && (
+				<section class="py-12">
+					<h2 class="text-3xl font-bold text-center mb-12">Awards & Recognition</h2>
+					<div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+						{awards.map(award => (
+							<div class="text-center space-y-4">
+								{award.image && (
+									<img 
+										src={award.image} 
+										alt={award.title}
+										class="w-24 h-24 mx-auto object-contain"
+									/>
+								)}
+								<div class="font-semibold">{award.year}</div>
+								<h3 class="text-xl font-bold">{award.title}</h3>
+								{award.description && <p class="text-gray-600">{award.description}</p>}
+							</div>
+						))}
+					</div>
+				</section>
+			)}
+
+			<!-- Video Embed -->
+			{videoEmbed && (
+				<section class="py-12">
+					<div class="max-w-4xl mx-auto">
+						<div class="aspect-w-16 aspect-h-9" set:html={videoEmbed} />
+					</div>
+				</section>
+			)}
+
+			<!-- CTA Section with gradient background -->
+			{ctaButton && (
+				<section class="py-16 text-center" data-aos="fade-up">
+					<div class="bg-gradient-to-r from-primary-600 to-accent-orange-500 p-12 rounded-3xl">
+						<h2 class="heading-2 text-white mb-8">Ready to Get Started?</h2>
+						<a
+							href={ctaButton.url}
+							class="btn btn-primary bg-white text-primary-600 hover:bg-gray-100"
+						>
+							{ctaButton.text}
+						</a>
+					</div>
+				</section>
+			)}
+		</div>
+	</Container>
+</Layout>

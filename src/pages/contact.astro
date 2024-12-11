@@ -1,0 +1,235 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+import { getEntry, getCollection } from 'astro:content';
+import TallyFormEmbed from '../components/sections/TallyFormEmbed.astro';
+import CalendarBooking from '../components/sections/CalendarBooking.astro';
+
+interface PageData {
+  template: string;
+  seo: {
+    title: string;
+    description: string;
+  };
+  hero: {
+    heading: string;
+    subheading: string;
+  };
+}
+
+// Get page content from CMS with error handling
+const pages = await getCollection('pages', ({ data }: { data: PageData }) => data.template === 'contact');
+if (!pages || pages.length === 0) {
+  throw new Error('Contact page not found in CMS');
+}
+const pageData = pages[0].data;
+
+// Get contact info from CMS settings with error handling
+const settings = await getCollection('settings');
+if (!settings || settings.length === 0) {
+  throw new Error('Settings not found in CMS');
+}
+const contactInfo = settings[0].data.company.contact;
+const integrations = settings[0].data.integrations;
+
+const contactBlocks = [
+  {
+    icon: 'ph:map-pin-bold',
+    title: 'Visit Us',
+    content: contactInfo.address.full,
+    link: contactInfo.address.maps
+  },
+  {
+    icon: 'ph:phone-bold',
+    title: 'Call Us',
+    content: contactInfo.phone.primary,
+    link: `tel:${contactInfo.phone.primary}`
+  },
+  {
+    icon: 'ph:envelope-bold',
+    title: 'Email Us',
+    content: contactInfo.email.primary,
+    link: `mailto:${contactInfo.email.primary}`
+  }
+];
+
+const tabs = [
+  { id: 'contact', label: 'Contact Us', icon: 'ph:envelope-bold' },
+  { id: 'quote', label: 'Get Quote', icon: 'ph:calculator-bold' },
+  { id: 'booking', label: 'Book Meeting', icon: 'ph:calendar-bold' }
+];
+
+const pageTitle = pageData.seo.title;
+const pageDescription = pageData.seo.description;
+
+---
+
+<Layout title={pageTitle} description={pageDescription}>
+  <div class="relative py-16 md:py-24">
+    <!-- Background Elements -->
+    <div class="absolute inset-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+      <div class="absolute inset-0 bg-grid-pattern opacity-[0.05] dark:opacity-[0.02]"></div>
+    </div>
+
+    <div class="container relative mx-auto px-4">
+      <!-- Hero Section -->
+      <div class="mx-auto max-w-3xl text-center">
+        <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
+          {pageData.hero.heading}
+        </h1>
+        <p class="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-400">
+          {pageData.hero.subheading}
+        </p>
+      </div>
+
+      <!-- Contact Info Cards -->
+      <div 
+        class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
+        data-aos="fade-up"
+        data-aos-delay="200"
+      >
+        {contactBlocks.map((info) => (
+          <a
+            href={info.link}
+            class="group bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-200/50 dark:border-gray-700/50"
+            target={info.icon === 'ph:map-pin-bold' ? '_blank' : '_self'}
+            rel={info.icon === 'ph:map-pin-bold' ? 'noopener noreferrer' : ''}
+          >
+            <div class="flex items-center gap-4">
+              <div class="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
+                <Icon 
+                  name={info.icon} 
+                  class="w-6 h-6 text-primary-600 dark:text-primary-400" 
+                />
+              </div>
+              <div>
+                <h3 class="font-semibold text-gray-900 dark:text-white mb-1">
+                  {info.title}
+                </h3>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">
+                  {info.content}
+                </p>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- Tabs -->
+      <div class="max-w-4xl mx-auto">
+        <div class="flex flex-wrap justify-center gap-4 mb-8">
+          {tabs.map((tab) => (
+            <button
+              class="tab-button flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all duration-300"
+              data-tab={tab.id}
+            >
+              <Icon name={tab.icon} class="w-5 h-5" />
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <!-- Form Sections -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+            <div id="contact" class="tab-content p-8">
+            <TallyFormEmbed
+              formId={integrations.forms.tally.formId}
+              title="Contact Us"
+              description="Get in touch with us"
+            />
+            </div>
+            
+            <div id="quote" class="tab-content hidden p-8">
+            <TallyFormEmbed
+              formId={integrations.forms.tally.formId}
+              title="Get a Quote"
+              description="Request a quote for your project"
+            />
+            </div>
+            
+            <div id="booking" class="tab-content hidden p-8">
+            <CalendarBooking
+              username={integrations.calendar.username}
+              height="600px"
+            />
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .tab-button {
+    @apply bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-400;
+  }
+
+  .tab-button.active {
+    @apply bg-primary-600 text-white shadow-lg shadow-primary-600/20;
+  }
+</style>
+
+<script is:inline>
+  // Load Tally Script
+  (function(d){
+    var s = d.createElement("script");
+    s.setAttribute("data-tally-script", "true");
+    s.src = "https://tally.so/widgets/embed.js";
+    s.defer = true;
+    d.body.appendChild(s);
+  })(document);
+</script>
+
+<script>
+  // Type definitions
+  interface HTMLElementWithDataTab extends HTMLElement {
+    dataset: {
+      tab?: string;
+    };
+  }
+
+  function setupTabs(): void {
+    const tabs = document.querySelectorAll<HTMLElementWithDataTab>('.tab-button');
+    const contents = document.querySelectorAll<HTMLElement>('.tab-content');
+
+    function setActiveTab(tabId: string): void {
+      // Update button states
+      tabs.forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.tab === tabId);
+      });
+
+      // Update content visibility
+      contents.forEach(content => {
+        content.classList.toggle('hidden', content.id !== tabId);
+      });
+    }
+
+    // Add click handlers
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabId = tab.dataset.tab;
+        if (tabId) setActiveTab(tabId);
+      });
+    });
+
+    // Set initial active tab
+    setActiveTab('contact');
+  }
+
+  // Initialize tabs
+  setupTabs();
+
+  // Support for hot module replacement
+  if (import.meta.hot) {
+    import.meta.hot.accept(() => {
+      setupTabs();
+    });
+  }
+</script>

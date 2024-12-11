@@ -1,0 +1,64 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import SEO from '../../components/SEO.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => {
+    return import.meta.env.PROD ? !data.isDraft : true;
+  });
+  
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const formattedDate = post.data.publishedDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Layout>
+  <SEO
+    title={post.data.seo?.title || post.data.title}
+    description={post.data.seo?.description || post.data.excerpt}
+    image={post.data.coverImage}
+  />
+  
+  <main class="container mx-auto px-4 py-16">
+    <article class="max-w-3xl mx-auto">
+      <header class="mb-8">
+        <img
+          src={post.data.coverImage}
+          alt={post.data.title}
+          class="w-full aspect-[16/9] object-cover rounded-lg mb-6"
+        />
+        <h1 class="text-4xl font-bold mb-4">{post.data.title}</h1>
+        <div class="flex items-center gap-4 text-gray-500">
+          <time datetime={post.data.publishedDate.toISOString()}>
+            {formattedDate}
+          </time>
+          {post.data.categories && (
+            <div class="flex gap-2">
+              {post.data.categories.map((category) => (
+                <span class="bg-gray-100 px-2 py-1 rounded-full text-sm">
+                  {category}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </header>
+      
+      <div class="prose prose-lg max-w-none">
+        <Content />
+      </div>
+    </article>
+  </main>
+</Layout>

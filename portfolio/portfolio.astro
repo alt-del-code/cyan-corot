@@ -1,0 +1,144 @@
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import AOS from 'aos';
+
+// Get all portfolio items and service categories
+const portfolioItems = await getCollection('portfolio');
+const categories = await getCollection('service-categories');
+
+// Sort portfolio items by completion date
+const sortedPortfolio = portfolioItems.sort((a, b) => 
+  new Date(b.data.completionDate).getTime() - new Date(a.data.completionDate).getTime()
+);
+
+// SEO metadata
+const seo = {
+  title: 'Our Portfolio | Creative Works and Projects',
+  description: 'Explore our diverse portfolio of projects, showcasing our expertise in design, fabrication, and creative solutions.',
+  ogImage: '/images/portfolio-og.jpg', // Make sure to add this image
+};
+
+<Layout title={seo.title} description={seo.description}>
+  <div class="container mx-auto px-4 py-16 max-w-7xl">
+    <!-- Portfolio Header -->
+    <div class="text-center mb-16" data-aos="fade-up">
+      <h1 class="text-4xl md:text-6xl font-heading font-bold mb-6 bg-gradient-to-r from-primary-600 to-accent-orange-500 bg-clip-text text-transparent">
+        Our Portfolio
+      </h1>
+      <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-sans leading-relaxed">
+        Discover our creative works and successful projects that showcase our expertise and dedication to excellence.
+      </p>
+    </div>
+
+    <!-- Filter Categories -->
+    <div class="flex flex-wrap gap-4 justify-center mb-16" data-aos="fade-up" data-aos-delay="100">
+      <button
+        class="category-filter active bg-primary-600 text-white px-6 py-2.5 rounded-full hover:bg-primary-700 transition-all duration-300 font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+        data-category="all"
+      >
+        All Projects
+      </button>
+      {categories.map((category) => (
+        <button
+          class="category-filter bg-gray-100 dark:bg-dark-surface px-6 py-2.5 rounded-full hover:bg-gray-200 dark:hover:bg-dark-surface-soft transition-all duration-300 font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+          data-category={category.id}
+        >
+          {category.data.name}
+        </button>
+      ))}
+    </div>
+
+    <!-- Portfolio Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10" id="portfolio-grid">
+      {sortedPortfolio.map((project) => (
+        <div 
+          class="portfolio-item group"
+          data-category={project.data.serviceCategory}
+          data-aos="fade-up"
+          data-aos-delay="150"
+        >
+          <a href={`/portfolio/${project.slug}`} class="block overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 bg-white dark:bg-dark-surface transform hover:-translate-y-2">
+            <div class="relative overflow-hidden">
+              <Image
+                src={project.data.thumbnail}
+                alt={project.data.title}
+                width={600}
+                height={400}
+                class="w-full h-72 object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              {project.data.featured && (
+                <span class="absolute top-4 right-4 bg-gradient-to-r from-primary-600 to-accent-orange-500 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-lg">
+                  Featured
+                </span>
+              )}
+              <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </div>
+            <div class="p-8">
+              <h3 class="text-2xl font-heading font-bold mb-3 group-hover:text-primary-600 transition-colors duration-300">
+                {project.data.title}
+              </h3>
+              <p class="text-gray-600 dark:text-gray-300 mb-6 line-clamp-2">
+                {project.data.shortDescription}
+              </p>
+              <div class="flex flex-wrap gap-2">
+                {project.data.services.slice(0, 3).map((service) => (
+                  <span class="text-sm bg-gray-100 dark:bg-dark-surface-soft px-4 py-1.5 rounded-full font-medium">
+                    {service}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Initialize AOS with enhanced configuration
+  import AOS from 'aos';
+  import 'aos/dist/aos.css';
+  
+  AOS.init({
+    duration: 1000,
+    once: true,
+    offset: 100,
+    easing: 'ease-out-cubic'
+  });
+
+  // Portfolio filtering logic
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterButtons = document.querySelectorAll('.category-filter');
+    const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const category = button.getAttribute('data-category');
+        
+        // Update active button state
+        filterButtons.forEach(btn => btn.classList.remove('active', 'bg-primary-600', 'text-white'));
+        button.classList.add('active', 'bg-primary-600', 'text-white');
+
+        // Filter items with animation
+        portfolioItems.forEach(item => {
+          const itemCategory = item.getAttribute('data-category');
+          item.style.transition = 'all 0.5s ease-in-out';
+          
+          if (category === 'all' || category === itemCategory) {
+            item.style.opacity = '1';
+            item.style.transform = 'scale(1)';
+            item.style.display = 'block';
+          } else {
+            item.style.opacity = '0';
+            item.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+              item.style.display = 'none';
+            }, 500);
+          }
+        });
+      });
+    });
+  });
+</script>

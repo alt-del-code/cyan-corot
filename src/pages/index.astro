@@ -1,11 +1,54 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import ServicesShowcase from '../components/sections/ServicesShowcase.astro';
+import ProcessFlow from '../components/sections/ProcessFlow.astro';
+import Industries from '../components/sections/Industries.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+
+
+
+import { getCollection } from 'astro:content';
+
+// Get hero slides
+const heroSlides = await getCollection('hero-slides');
+const sortedSlides = heroSlides.sort((a, b) => a.data.order - b.data.order);
+
+// Hero content
+const heroContent = {
+  title: "Industrial Excellence Through Innovation",
+  subtitle: "Precision Fabrication & Supply Solutions",
+  description: "Your trusted partner in industrial fabrication, material supply, and hardware solutions. Delivering excellence across India from our base in Hosur, Tamil Nadu.",
+  stats: {
+    projects: "500+",
+    clients: "200+",
+    experience: "15+"
+  },
+  features: [
+    "ISO 9001:2015 Certified",
+    "Industry-Leading Quality",
+    "Pan-India Service",
+    "24/7 Support"
+  ]
+};
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<Layout 
+  title="Industrial Excellence"
+  description="Leading industrial fabrication and supply solutions provider in Hosur, Tamil Nadu. Precision manufacturing, quality materials, and expert service."
+>
+  <main>
+    <Hero 
+        title={heroContent.title}
+        subtitle={heroContent.subtitle}
+        description={heroContent.description}
+        stats={heroContent.stats}
+        slides={sortedSlides}
+        features={heroContent.features}
+      />
+    
+    <ServicesShowcase />
+    <ProcessFlow />
+    <Industries />
+  </main>
+</Layout> 

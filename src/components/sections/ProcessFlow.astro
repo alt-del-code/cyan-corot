@@ -1,0 +1,141 @@
+---
+import { Icon } from "astro-icon/components";
+
+const processes = [
+  {
+    icon: "ph:chat-circle-text-bold",
+    title: "Consultation",
+    description: "Initial discussion of requirements and project scope",
+    steps: [
+      "Project requirements gathering",
+      "Technical feasibility assessment",
+      "Cost estimation"
+    ]
+  },
+  {
+    icon: "ph:pencil-line-bold",
+    title: "Design & Planning",
+    description: "Detailed design and production planning phase",
+    steps: [
+      "Technical drawings preparation",
+      "Material selection",
+      "Production timeline planning"
+    ]
+  },
+  {
+    icon: "ph:gear-bold",
+    title: "Fabrication",
+    description: "Manufacturing and fabrication process",
+    steps: [
+      "Material preparation",
+      "Precision machining",
+      "Quality control checks"
+    ]
+  },
+  {
+    icon: "ph:check-circle-bold",
+    title: "Quality Assurance",
+    description: "Rigorous testing and quality verification",
+    steps: [
+      "Dimensional inspection",
+      "Performance testing",
+      "Final quality approval"
+    ]
+  }
+];
+---
+
+<section class="relative py-20 overflow-hidden">
+  <!-- Background Elements -->
+  <div class="absolute inset-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <div class="absolute inset-0 bg-grid-pattern opacity-[0.05] dark:opacity-[0.02]"></div>
+  </div>
+
+  <div class="container relative mx-auto px-4">
+    <div class="text-center mb-16">
+      <h2 
+        class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+        data-aos="fade-up"
+      >
+        Our Process
+      </h2>
+      <p 
+        class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg"
+        data-aos="fade-up"
+        data-aos-delay="100"
+      >
+        A streamlined approach to deliver excellence in every project
+      </p>
+    </div>
+
+    <div class="relative">
+      <!-- Connection Line -->
+      <div 
+        class="absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-blue-200 via-purple-300 to-blue-200 dark:from-blue-900 dark:via-purple-800 dark:to-blue-900 transform -translate-y-1/2 hidden lg:block"
+        data-aos="scale-x-100"
+        data-aos-duration="1000"
+      ></div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+        {processes.map((process, index) => (
+          <div 
+            class="group relative bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 dark:border-gray-700"
+            data-aos="fade-up"
+            data-aos-delay={index * 100}
+          >
+            <!-- Process Number -->
+            <div class="absolute -top-4 -right-4 w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+              {index + 1}
+            </div>
+
+            <!-- Icon -->
+            <div class="relative mb-6 inline-block">
+              <div class="absolute inset-0 bg-blue-500/20 dark:bg-blue-500/10 rounded-xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+              <div class="relative p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/50 dark:to-purple-900/50 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                <Icon name={process.icon} class="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              </div>
+            </div>
+
+            <!-- Content -->
+            <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              {process.title}
+            </h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">
+              {process.description}
+            </p>
+
+            <!-- Steps -->
+            <ul class="space-y-2">
+              {process.steps.map(step => (
+                <li class="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                  <Icon name="ph:check-circle" class="w-4 h-4 mr-2 text-blue-500" />
+                  {step}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  @keyframes scale-x-100 {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  [data-aos="scale-x-100"] {
+    transform-origin: left;
+    transition-property: transform;
+    transition-duration: 1000ms;
+  }
+</style>

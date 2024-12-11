@@ -1,0 +1,60 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import SEO from '../../components/SEO.astro';
+
+export async function getStaticPaths() {
+  const portfolioEntries = await getCollection('portfolio');
+  return portfolioEntries.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+const seo = {
+  title: `${entry.data.title} | Portfolio`,
+  description: entry.data.shortDescription,
+  image: entry.data.thumbnail,
+};
+---
+
+<Layout>
+  <SEO {...seo} />
+  <main class="py-16 sm:py-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <article class="mx-auto max-w-4xl">
+        <header class="mb-10">
+          <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
+            {entry.data.title}
+          </h1>
+          <div class="mt-4 flex flex-wrap gap-4 text-gray-600 dark:text-gray-300">
+            <p>Client: {entry.data.client}</p>
+            <p>Completed: {new Date(entry.data.completionDate).toLocaleDateString()}</p>
+          </div>
+        </header>
+
+        <div class="prose prose-lg dark:prose-invert max-w-none">
+          <Content />
+        </div>
+
+        {entry.data.projectImages && entry.data.projectImages.length > 0 && (
+          <div class="mt-12">
+            <h2 class="text-2xl font-bold mb-6">Project Gallery</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {entry.data.projectImages.map((image) => (
+                <img
+                  src={image}
+                  alt={`${entry.data.title} project image`}
+                  class="rounded-lg shadow-md"
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </article>
+    </div>
+  </main>
+</Layout>

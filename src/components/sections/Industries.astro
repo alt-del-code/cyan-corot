@@ -1,0 +1,113 @@
+---
+import { Icon } from "astro-icon/components";
+
+const industries = [
+  {
+    icon: "ph:factory-bold",
+    title: "Manufacturing",
+    description: "Custom fabrication solutions for manufacturing facilities and production lines",
+    features: ["Equipment Parts", "Production Line Components", "Custom Machinery"]
+  },
+  {
+    icon: "ph:buildings-bold",
+    title: "Construction",
+    description: "Structural steel and hardware solutions for construction projects",
+    features: ["Structural Steel", "Metal Frameworks", "Building Components"]
+  },
+  {
+    icon: "ph:gear-fine-bold",
+    title: "Automotive",
+    description: "Precision components and hardware for automotive applications",
+    features: ["Custom Parts", "Assembly Components", "Specialized Tools"]
+  },
+  {
+    icon: "ph:wind-bold",
+    title: "Energy",
+    description: "Fabrication services for energy sector equipment and infrastructure",
+    features: ["Power Generation", "Distribution Systems", "Renewable Energy"]
+  }
+];
+---
+
+<section class="relative py-20 overflow-hidden">
+  <!-- Background Elements -->
+  <div class="absolute inset-0">
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(circle_500px_at_50%_200px,rgba(0,0,0,0.1),transparent)] dark:bg-[radial-gradient(circle_500px_at_50%_200px,rgba(255,255,255,0.1),transparent)]"></div>
+  </div>
+
+  <div class="container relative mx-auto px-4">
+    <div class="text-center mb-16">
+      <h2 
+        class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+        data-aos="fade-up"
+      >
+        Industries We Serve
+      </h2>
+      <p 
+        class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg"
+        data-aos="fade-up"
+        data-aos-delay="100"
+      >
+        Delivering specialized solutions across diverse industrial sectors
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {industries.map((industry, index) => (
+        <div 
+          class="group relative bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-200/50 dark:border-gray-700/50 hover:border-blue-500/50 dark:hover:border-blue-500/30 transform hover:-translate-y-1 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5"
+          data-aos="fade-up"
+          data-aos-delay={index * 100}
+        >
+          <!-- Glow Effect -->
+          <div class="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/5 group-hover:to-purple-500/5 rounded-2xl transition-colors duration-500"></div>
+          
+          <!-- Icon Container -->
+          <div class="relative mb-8">
+            <div class="absolute inset-0 bg-blue-500/20 dark:bg-blue-500/10 rounded-xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+            <div class="relative p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/50 dark:to-purple-900/50 rounded-xl group-hover:scale-110 transition-transform duration-300">
+              <Icon 
+                name={industry.icon} 
+                class="w-8 h-8 text-blue-600 dark:text-blue-400 transform group-hover:rotate-12 transition-transform duration-300" 
+              />
+            </div>
+          </div>
+          
+          <!-- Content -->
+          <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            {industry.title}
+          </h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-6 text-sm leading-relaxed">
+            {industry.description}
+          </p>
+          
+          <!-- Features -->
+          <ul class="space-y-3">
+            {industry.features.map(feature => (
+              <li class="flex items-center text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-300 transition-colors">
+                <Icon 
+                  name="ph:check-circle" 
+                  class="w-4 h-4 mr-2 text-blue-500 group-hover:scale-110 transition-transform duration-300" 
+                />
+                {feature}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+
+  .floating {
+    animation: float 6s ease-in-out infinite;
+  }
+</style>
